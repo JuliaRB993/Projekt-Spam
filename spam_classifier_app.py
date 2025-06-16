@@ -1,20 +1,19 @@
-
 import streamlit as st
 import pandas as pd
 import string
 import nltk
 from nltk.corpus import stopwords
+from nltk.tokenize import TreebankWordTokenizer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from load_data_safe import load_data_safe
 
-nltk.download('stopwords')
-nltk.download('punkt')
+# Nie wymaga punkt, działa offline
+tokenizer = TreebankWordTokenizer()
 
 st.set_page_config(page_title="Klasyfikator Spamu", layout="centered")
-
 st.title("📧 Klasyfikator Emaili: Spam czy Nie-Spam")
 st.write("Wprowadź treść wiadomości email, a aplikacja powie, czy to spam.")
 
@@ -30,7 +29,7 @@ def build_model():
     def preprocess(text):
         text = text.lower()
         text = ''.join([char for char in text if char not in string.punctuation])
-        tokens = nltk.word_tokenize(text)
+        tokens = tokenizer.tokenize(text)
         tokens = [word for word in tokens if word not in stop_words]
         return " ".join(tokens)
 
